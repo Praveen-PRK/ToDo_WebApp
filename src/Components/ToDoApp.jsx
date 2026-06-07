@@ -35,7 +35,7 @@ function ToDoApp(){
     }
 
     // --- CHECKBOX TOGGLE COMPLETENESS STATE
-    const toggelTask = (id)=>{
+    const toggleTask = (id)=>{
         const updatedList = taskList.map(t=>{
             return t.id === id ? {...t,isCompleted: !t.isCompleted} : t
         });
@@ -51,7 +51,7 @@ function ToDoApp(){
         return true;
     })
     return (<div>
-        <h2>To Do List</h2>
+        {/* <h2>To Do List</h2> */}
 
         {/* ----  TAKING TASK INPUT  ---- */}
         <input 
@@ -66,9 +66,21 @@ function ToDoApp(){
         {/* -- FILTER  &  TOTAL TASKS */}
         <div>
             <div className="filters">
-                <button onClick={()=>setFilter("all")}>All</button>
-                <button onClick={()=>setFilter("active")}>Active</button>
-                <button onClick={()=>setFilter("completed")}>Completed</button>
+                <button 
+                  className={filter === "all" ? "active" : ""}
+                  onClick={()=>setFilter("all")}>
+                    All
+                </button>
+                <button 
+                  className={filter === "active" ? "active" : ""}
+                  onClick={()=>setFilter("active")}>
+                    Active
+                </button>
+                <button 
+                  className={filter === "completed" ? "active" : ""}
+                  onClick={()=>setFilter("completed")}>
+                    Completed
+                </button>
             </div>
             <p className="totalTask">Total Tasks - {filteredTask.length}</p>
         </div>
@@ -78,7 +90,7 @@ function ToDoApp(){
             <ul>
                 {filteredTask.map((textTask)=>
                     // --  ToDoItem  --
-                    (<ToDoItem key={textTask.id} taskData={textTask} toggelTask={toggelTask} handleDelete={handleDelete}/>)
+                    (<ToDoItem key={textTask.id} taskData={textTask} toggleTask={toggleTask} handleDelete={handleDelete}/>)
                 )}
             </ul>
         </div>
