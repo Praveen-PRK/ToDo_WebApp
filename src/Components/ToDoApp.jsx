@@ -1,10 +1,20 @@
 import { useState } from "react";
 import ToDoItem from "./ToDoItem";
+import EditPopUp from "./EditPopUp";
 
 function ToDoApp(){
+    // Input Task
     const [task,setTask] = useState("");
+    // Task Data
     const [taskList,setTaskList] = useState([]);
+    // Filter Value
     const [filter,setFilter] = useState("all");
+    // Edit Popup
+    const [isEditing, setIsEditing] = useState(false);
+    // Current Edit Task
+    const [currentTask, setCurrentTask] = useState(null);
+    // Task Text After Editing (for Edit popup)
+    const [editedText, setEditedText] = useState("");
 
     // --- ADDING TASK
     const handleAddTask = ()=>{
@@ -49,19 +59,52 @@ function ToDoApp(){
         if(filter === "completed") return task.isCompleted;
         // for showing all task
         return true;
-    })
-    return (<div>
+    });
+
+    const handleEditClick = (task) => {
+        setCurrentTask(task);
+        setEditedText(task.text);
+        setIsEditing(true);
+    };
+
+    const handleSave = ()=>{
+        const updatedTask = taskList.map(t => 
+            t.id === currentTask.id ? {...t,text:editedText} : t
+        );
+        setTaskList(updatedTask);
+        setCurrentTask(null);
+        setIsEditing(false);
+    }
+
+    const handleCancel = ()=>{
+        setCurrentTask(null);
+        setIsEditing(false);
+    }
+
+    return (
+    <div className="toDoApp">
         {/* <h2>To Do List</h2> */}
 
+        {isEditing &&
+            <EditPopUp 
+                editedText={editedText}
+                setEditedText={setEditedText}
+                handleCancel={handleCancel}
+                handleSave={handleSave}
+            />
+        }
+
         {/* ----  TAKING TASK INPUT  ---- */}
-        <input 
-            className="taskInput"
-            value={task}
-            onChange={(e)=>setTask(e.target.value)}
-            onKeyDown={handleKey}
-            placeholder="Enter Task"
-        />
-        <button className="addBut" onClick={handleAddTask}>Add</button>
+        <div className="takingTask">
+            <input 
+                className="taskInput"
+                value={task}
+                onChange={(e)=>setTask(e.target.value)}
+                onKeyDown={handleKey}
+                placeholder="Enter Task"
+            />
+            <button className="addBut" onClick={handleAddTask}>Add</button>
+        </div>
 
         {/* -- FILTER  &  TOTAL TASKS */}
         <div>
@@ -90,7 +133,7 @@ function ToDoApp(){
             <ul>
                 {filteredTask.map((textTask)=>
                     // --  ToDoItem  --
-                    (<ToDoItem key={textTask.id} taskData={textTask} toggleTask={toggleTask} handleDelete={handleDelete}/>)
+                    (<ToDoItem key={textTask.id} taskData={textTask} toggleTask={toggleTask} handleDelete={handleDelete} handleEditClick={handleEditClick}/>)
                 )}
             </ul>
         </div>
